@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'DM Sans', 'Avenir Next', sans-serif;
+  color: #172a3a;
+  background: #f4f7f8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, textarea, input { font: inherit; }
+
+.commerce-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(21, 54, 69, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 54, 69, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 90% 0%, rgba(17, 153, 142, 0.10), transparent 28rem),
+    #f4f7f8;
+  background-size: 28px 28px, 28px 28px, auto, auto;
+}

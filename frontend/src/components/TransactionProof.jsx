@@ -1,0 +1,17 @@
+import React from 'react';
+import { Check, CircleDollarSign, FileCheck2, LockKeyhole, ReceiptText } from 'lucide-react';
+
+const Step = ({ done, title, detail, icon: Icon }) => <div className={done ? 'proof-step done' : 'proof-step'}><span className="proof-icon">{done ? <Check size={14} /> : <Icon size={14} />}</span><div><b>{title}</b><small>{detail}</small></div></div>;
+
+export default function TransactionProof({ session, buyerDecision }) {
+  const state = session?.current_state;
+  const offer = session?.selected_offer;
+  const order = session?.razorpay_order;
+  const payment = session?.payment_result;
+  const upsellEvent = [...(session?.audit_logs || [])].reverse().find((event) => event.event_type === 'MERCHANT_UPSELL_OFFER');
+  const upsell = upsellEvent?.payload?.offer || buyerDecision;
+  const completed = state === 'PURCHASE_COMPLETED';
+  return <section className="card proof-card"><div className="card-head"><div><p className="eyebrow">TRANSACTION PROOF</p><h3>Negotiation to payment</h3></div><CircleDollarSign className="teal-icon" size={18} /></div><div className="proof-steps"><Step done={Boolean(offer)} title="Offer selected" detail={offer ? `${offer.merchant_name} · ₹${Math.round(offer.price).toLocaleString('en-IN')}` : 'Waiting for merchant offers'} icon={ReceiptText} /><Step done={['AUTHORIZED', 'ORDER_CREATED', 'PAYMENT_INITIATED', 'PAYMENT_VERIFIED', 'PURCHASE_COMPLETED'].includes(state)} title="Policy approval" detail={state === 'AWAITING_AUTHORIZATION' ? 'Customer approval required' : 'Authorization granted'} icon={LockKeyhole} /><Step done={Boolean(order)} title="Razorpay order created" detail={order ? `${order.order_id} · ${order.status}` : 'Create order after approval'} icon={ReceiptText} /><Step done={completed} title="Customer payment" detail={completed ? `Verified ${payment?.razorpay_payment_id || 'test payment'}` : 'Awaiting customer payment'} icon={FileCheck2} /></div>{upsell && <div className="revenue-loop"><div><p className="eyebrow">MERCHANT REVENUE LOOP</p><b>Agent-recommended add-on</b><p>{upsell.recommended_product_title || upsell.product_title || 'Complementary product'} · ₹{Number(upsell.price || upsell.recommended_price || 0).toLocaleString('en-IN')}</p></div><span>{buyerDecision?.decision || 'OFFERED'}</span></div>}{order && <div className="invoice-proof"><div className="invoice-head"><div><p className="eyebrow">RAZORPAY PAYMENT PROOF</p><b>{completed ? 'Payment verified and order confirmed' : 'Order ready for customer payment'}</b></div><small>{order.is_simulated === false ? 'RAZORPAY TEST API' : 'LOCAL TEST SIMULATOR'}</small></div><div className="invoice-grid"><Info label="Amount" value={`₹${(Number(order.amount || 0) / 100).toLocaleString('en-IN')}`} /><Info label="Currency" value={order.currency || 'INR'} /><Info label="Order ID" value={order.order_id} /><Info label="Receipt" value={order.receipt} /><Info label="Payment ID" value={payment?.razorpay_payment_id || 'Pending'} /><Info label="Method" value={payment?.method?.toUpperCase() || 'Pending'} /></div><div className="api-proof"><span>API call</span><code>POST /api/v1/commerce/transaction/create-razorpay-order</code><span>{completed ? 'Signature verified by Verification Agent' : 'Creates the Razorpay order after customer approval'}</span></div></div>}</section>;
+}
+
+function Info({ label, value }) { return <div><small>{label}</small><b title={value}>{value}</b></div>; }
