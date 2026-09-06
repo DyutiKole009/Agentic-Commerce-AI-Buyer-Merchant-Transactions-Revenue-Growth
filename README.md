@@ -181,7 +181,6 @@ RazorPay/
 │   │   │   ├── policy_agent.py         # Spend limits & authorization boundary
 │   │   │   ├── transaction_agent.py    # Razorpay API client & Order generator
 │   │   │   └── verification_agent.py   # Closed-loop verifier & Recovery agent
-│   │   │   └── growth_agent.py         # Upsell, cross-sell & merchant revenue opportunities
 │   │   ├── services/
 │   │   │   ├── razorpay_service.py     # Live & Sandbox Razorpay Orders & Webhooks
 │   │   │   └── mock_merchants_db.py    # Multi-merchant product catalogs
