@@ -1,6 +1,19 @@
-# 💳 Razorpay Closed-Loop Agentic Commerce Platform (Track 1)
+# 💳 Razorpay Agentic Commerce OS
 
-> **A verifiable, policy-constrained autonomous commerce engine that bridges Natural Language Intent → Multi-Merchant A2A Reasoning → Requirement-Aware Scoring → Spend Authorization Boundaries → Razorpay Order Execution → Closed-Loop Verification & Self-Healing Recovery.**
+> **Razorpay Agentic Commerce OS**
+
+> **A verifiable, policy-constrained agentic commerce platform that makes merchants transactable by AI buyers and drives merchant revenue growth through intelligent commerce opportunities.**
+>
+> ** Tehnical Flow:
+> Natural Language Intent
+→ Multi-Merchant A2A Reasoning
+→ Requirement-Aware Scoring
+→ Spend Authorization
+→ Razorpay Execution
+→ Verification & Recovery
+→ Growth Opportunities
+→ Merchant Approval
+→ Revenue Growth**
 
 ---
 
@@ -8,11 +21,19 @@
 
 Traditional shopping assistants stop at: *"I recommend Product X."*  
 **This system goes the entire distance**: It executes the complete commercial lifecycle, from intent interpretation to Razorpay order creation, payment verification, and autonomous failure recovery.
+The commerce loop does not end with a completed purchase.
+
+Completed commerce interactions can generate relevant **upsell and cross-sell opportunities** through the Growth Agent. These recommendations remain merchant-controlled: the merchant reviews and explicitly approves a growth action before execution.
+
+This creates a closed loop:
+
+**AI Buyer Discovery → Transaction → Growth Opportunity → Merchant Approval → Revenue Growth**
 
 ### The Three Architectural Pillars:
 1. 🧠 **Intelligence & Intent Structuring**: Converts unstructured customer prompts into a verified, multi-attribute Purchase Specification contract.
 2. 🤝 **Agent-to-Agent (A2A) Commerce**: Exposes a versioned `POST /api/v1/agent/merchants/{merchant_id}/a2a/query` contract for buyer agents. The bundled merchants run locally as a working protocol simulation; the same structured payload and `MerchantOffer` response can be mapped to external merchant endpoints.
 3. 💳 **Safe Transaction Execution with Razorpay**: Strictly separates **Intent** from **Authorization** via policy guardrails, creates authentic Razorpay Orders, verifies cryptographic payment signatures, and triggers self-healing loops upon transaction failures.
+4. 📈 **Merchant Revenue Growth**: Uses completed commerce interactions to identify relevant upsell and cross-sell opportunities, with merchant approval required before growth actions are executed.
 
 ---
 
@@ -20,35 +41,45 @@ Traditional shopping assistants stop at: *"I recommend Product X."*
 
 ```mermaid
 flowchart TD
-    User([Customer / Natural Language Requirement]) -->|Prompt| IntentAgent[🧠 Intent Extraction Agent]
-    IntentAgent -->|Structured Purchase Spec| BuyerAgent[🤖 Autonomous Buyer Agent]
-    
-    subgraph MultiMerchantNetwork [Agent-to-Agent Commerce Ecosystem]
-        BuyerAgent <-->|A2A Request / Counter-Offer| MerchantA[🏬 ElectroMax Audio Agent]
-        BuyerAgent <-->|A2A Request / Counter-Offer| MerchantB[🏬 SoundVault Smart Agent]
-        BuyerAgent <-->|A2A Request / Counter-Offer| MerchantC[🏬 BudgetGizmos Direct Agent]
-        BuyerAgent <-->|A2A Request / Counter-Offer| MerchantD[🏬 SonicWave Tech Agent]
+    User([Customer / Natural Language Requirement]) -->|Prompt| IntentAgent[Intent Extraction Agent]
+    IntentAgent -->|Structured Purchase Spec| BuyerAgent[Autonomous Buyer Agent]
+
+    subgraph MultiMerchantNetwork[Agent-to-Agent Commerce Ecosystem]
+        BuyerAgent <-->|A2A Request / Counter-Offer| MerchantA[ElectroMax Audio Agent]
+        BuyerAgent <-->|A2A Request / Counter-Offer| MerchantB[SoundVault Smart Agent]
+        BuyerAgent <-->|A2A Request / Counter-Offer| MerchantC[BudgetGizmos Direct Agent]
+        BuyerAgent <-->|A2A Request / Counter-Offer| MerchantD[SonicWave Tech Agent]
     end
 
-    BuyerAgent -->|Requirement-Aware Scoring Matrix| PolicyAgent[🛡️ Policy & Spend Boundary Agent]
-    
-    subgraph PolicyEngine [Separation of Intent vs Authorization]
-        PolicyAgent -->|Check: Budget, Mandate Cap, Category| PolicyCheck{Authorized?}
-        PolicyCheck -->|Threshold Exceeded| InteractiveAuth[🙋 Interactive User Approval]
-        PolicyCheck -->|Within Mandate Limit| AutoApproved[⚡ Autonomous Execution Token]
+    BuyerAgent -->|Requirement-Aware Scoring| PolicyAgent[Policy and Spend Boundary Agent]
+
+    subgraph PolicyEngine[Intent vs Authorization]
+        PolicyAgent -->|Check Budget and Mandate| PolicyCheck{Authorized?}
+        PolicyCheck -->|Threshold Exceeded| InteractiveAuth[Interactive User Approval]
+        PolicyCheck -->|Within Limit| AutoApproved[Autonomous Execution]
     end
-    
-    InteractiveAuth --> TransAgent[💳 Transaction Execution Agent]
+
+    InteractiveAuth --> TransAgent[Transaction Execution Agent]
     AutoApproved --> TransAgent
-    
-    TransAgent -->|Mint Order| Razorpay[(Razorpay Orders API)]
-    Razorpay -->|Order / Webhooks / Signatures| VerifyAgent[🔄 Closed-Loop Verification Agent]
-    
-    subgraph ClosedLoopRecovery [Closed-Loop Verification & Self-Healing]
-        VerifyAgent -->|Signature & Event Check| StatusCheck{Outcome}
-        StatusCheck -->|PAYMENT_CAPTURED| ConfirmOrder[✅ Merchant Order Confirmed & Dispatched]
-        StatusCheck -->|PAYMENT_FAILED / TIMEOUT| RecoveryAgent[🩺 Autonomous Diagnosis & Recovery Engine]
-        RecoveryAgent -->|Switch Merchant / Retry Payment Rail| TransAgent
+
+    TransAgent -->|Create Order| Razorpay[Razorpay Orders API]
+    Razorpay -->|Payment Result and Signature| VerifyAgent[Closed-Loop Verification Agent]
+
+    subgraph ClosedLoopRecovery[Verification and Self-Healing Recovery]
+        VerifyAgent -->|Verify Payment| StatusCheck{Outcome?}
+        StatusCheck -->|Payment Captured| ConfirmOrder[Order Confirmed and Completed]
+        StatusCheck -->|Payment Failed or Timeout| RecoveryAgent[Diagnosis and Recovery Agent]
+        RecoveryAgent -->|Retry or Switch Merchant| TransAgent
+    end
+
+    ConfirmOrder --> GrowthAgent[Merchant Growth Agent]
+
+    subgraph MerchantGrowth[Merchant Revenue Growth]
+        GrowthAgent -->|Analyze Completed Transaction| Opportunity[Upsell or Cross-Sell Opportunity]
+        Opportunity --> MerchantApproval{Merchant Approves?}
+        MerchantApproval -->|Approved| GrowthAction[Execute Growth Action]
+        MerchantApproval -->|Rejected| NoAction[No Action]
+        GrowthAction --> RevenueGrowth[Merchant Revenue Growth]
     end
 ```
 
@@ -118,6 +149,13 @@ Merchant agents reason dynamically:
 - Verifies Razorpay payment signatures (`HMAC-SHA256`).
 - When a payment failure or stock conflict is simulated, the Verification Agent diagnoses the root cause and executes a recovery strategy without losing the customer's state or forcing them to start from scratch.
 
+### 5. Merchant Revenue Growth
+The commerce lifecycle does not end with purchase completion.
+- The **Growth Agent** analyzes completed commerce interactions to identify relevant upsell and cross-sell opportunities.
+- Growth actions remain merchant-controlled:
+**Completed Transaction → Growth Opportunity → Merchant Review → Approval → Revenue Growth**
+This addresses both sides of agentic commerce: making merchants transactable by AI buyers and helping merchants increase revenue through agent-driven opportunities.
+
 ---
 
 ## 🛠️ Project Structure
@@ -143,6 +181,7 @@ RazorPay/
 │   │   │   ├── policy_agent.py         # Spend limits & authorization boundary
 │   │   │   ├── transaction_agent.py    # Razorpay API client & Order generator
 │   │   │   └── verification_agent.py   # Closed-loop verifier & Recovery agent
+│   │   │   └── growth_agent.py         # Upsell, cross-sell & merchant revenue opportunities
 │   │   ├── services/
 │   │   │   ├── razorpay_service.py     # Live & Sandbox Razorpay Orders & Webhooks
 │   │   │   └── mock_merchants_db.py    # Multi-merchant product catalogs
@@ -221,17 +260,23 @@ python -m pytest tests -v
 
 ## 🎬 Demo Walkthrough Scenarios
 
-1. **Scenario A: Commute ANC Headphone Purchase (Interactive Policy Approval)**
-   - Prompt: *"I need wireless headphones under ₹5,000, with good battery life, for daily commuting. Prioritize noise cancellation."*
-   - Step 1: Click **Extract Spec** $\rightarrow$ Intent Agent extracts budget (₹5,000), use case, and high-priority ANC requirement.
-   - Step 2: Click **Broadcast A2A Query** $\rightarrow$ Discovers 4 merchants; SoundVault applies dynamic coupon (₹4,800), ElectroMax offers ₹4,299.
-   - Step 3: Scoring matrix ranks SoundVault / ElectroMax top due to ANC; BudgetGizmos (₹3,900) loses because it lacks Active ANC.
-   - Step 4: Policy Gate triggers (`₹4,800 > ₹4,000` autonomous threshold) $\rightarrow$ User clicks **Authorize ₹4,800**.
-   - Step 5: Click **Create Razorpay Order** $\rightarrow$ Mints order ID (`order_...`).
-   - Step 6: Click **Simulate Successful Razorpay Payment** $\rightarrow$ Signature verified, closed-loop completed!
+### Scenario A: AI Buyer Purchase with Policy Approval
 
-2. **Scenario B: Self-Healing Failure Recovery**
-   - Click **Simulate Stock Conflict** or **Simulate Bank Timeout** on the created Razorpay order.
-   - State Machine transitions: `ORDER_CREATED` $\rightarrow$ `PAYMENT_FAILED` $\rightarrow$ `FAILURE_ANALYSIS` $\rightarrow$ `RECOVERY_ACTION`.
-   - Verification Agent diagnoses root-cause and selects the runner-up merchant offer.
-   - Click **Execute Autonomous Recovery Loop** $\rightarrow$ Order is seamlessly recreated with the fallback candidate and completed!
+Customer intent → Intent extraction → Multi-merchant A2A discovery → 
+Requirement-aware ranking → Policy approval → Razorpay payment → Verification.
+
+**Key guardrail:** A ₹5,000 customer budget does not automatically authorize autonomous spending. Offers above the ₹4,000 mandate require explicit approval.
+
+### Scenario B: Self-Healing Failure Recovery
+
+A simulated payment or stock failure triggers:
+
+`PAYMENT_FAILED → FAILURE_ANALYSIS → RECOVERY_ACTION`
+
+The system diagnoses the failure and can retry or switch to a fallback merchant while preserving the customer's commerce context.
+
+### Scenario C: Merchant Revenue Growth
+
+Completed transaction → Growth opportunity → Merchant approval → Revenue growth.
+
+The Growth Agent identifies relevant upsell and cross-sell opportunities, while the merchant remains in control of approving growth actions.
